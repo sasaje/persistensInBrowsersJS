@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Persistens in browsers</title>
+</head>
+<body>
+    <h1>Persistens in browsers</h1>
+    <p><button id="growPlant">CLICKtoSCORE</button></p>
+    <h1 id="">ClickScores: <span id="antalGuleroedder">0</span></h1>
+
+    <div>
+        <button id="saveCookie">Gem i cookie</button>
+        <button id="saveLocal">Gem lokalt</button>
+        <button id="saveSession">Gem i session</button>
+        <button id="saveDB">Gem i indexed DB</button>
+    </div>
+    <div style=" margin-top: 20px;">
+        <button id="loadCookie">Load fra cookie</button>
+        <button id="loadLocal">Load fra lokalt</button>
+        <button id="loadSession">Load fra session</button>
+        <button id="loadDB">Load fra indexed DB</button>
+    </div>
+    <div style="margin-top: 20px; display: none;">
+        <button id="deleteCookie">Delete cookie</button>
+        <button id="deleteLocal">Delete lokalt</button>
+        <button id="deleteSession">Delete session</button>
+        <button id="deleteDB">Delete fra indexed DB</button>
+    </div>
+
+    <p id="showPersistens"></p>
+
+    <script>
+        var antalGuleroedder = 0;
+        document.getElementById("antalGuleroedder").innerHTML = antalGuleroedder;
+
+        document.getElementById("growPlant").addEventListener("click", () => {
+            document.getElementById("antalGuleroedder").innerHTML = ++antalGuleroedder;
+        });
+
+        //Save and load from cookie - max kapacitet i en cookie 3kB 
+        document.getElementById("saveCookie").addEventListener("click", () => {
+            console.log("before" + antalGuleroedder);
+            document.cookie = antalGuleroedder;
+            console.log("after" + antalGuleroedder);
+            console.log("Cookie sat: antalGuleroedder " + (antalGuleroedder));
+            document.getElementById("showPersistens").innerHTML = "Cookie sat: " + (antalGuleroedder);
+        });
+        document.getElementById("loadCookie").addEventListener("click", () => {
+            console.log("Cookie hentet: antalGuleroedder " + (document.cookie));
+            document.getElementById("showPersistens").innerHTML = "Cookie hentet: " + (document.cookie);
+        });
+        document.getElementById("deleteCookie").addEventListener("click", () => {
+            document.cookie = 0;
+            console.log("Cookie slettet: antalGuleroedder ");
+            document.getElementById("showPersistens").innerHTML = "Cookie slettet.";
+        });
+
+
+        //Save and load from localStorage
+        document.getElementById("saveLocal").addEventListener("click", () => {
+            localStorage.setItem('antalGuleroedder', antalGuleroedder);
+            console.log("localStorage sat: " + localStorage.getItem('antalGuleroedder')); 
+            document.getElementById("showPersistens").innerHTML = "LocalStorage sat: " + antalGuleroedder;
+        });
+
+        document.getElementById("loadLocal").addEventListener("click", () => {
+            document.getElementById("showPersistens").innerHTML = "Local sat: " + localStorage.getItem('antalGuleroedder');
+            console.log("localStorage hentet: " + localStorage.getItem('antalGuleroedder')); 
+            document.getElementById("showPersistens").innerHTML = "LocalStorage hentet: " + localStorage.getItem('antalGuleroedder');
+
+            //display to DB input fields
+            var value = localStorage.getItem('antalGuleroedder');
+            console.log("Value to store in DB is:" + value);
+            document.getElementById("input").value = value;
+        });
+
+        document.getElementById("deleteLocal").addEventListener("click", () => {
+            delete localStorage; 
+            console.log("LocalStorage slettet."); 
+            document.getElementById("showPersistens").innerHTML = "LocalStorage slettet.";
+        });
+
+        //Save and load from sessionStorage
+        document.getElementById("saveSession").addEventListener("click", () => {
+            sessionStorage.setItem('antalGuleroedder', antalGuleroedder);
+            console.log("sessionStorage sat: " + sessionStorage.getItem('antalGuleroedder')); 
+            document.getElementById("showPersistens").innerHTML = "sessionStorage sat: " + antalGuleroedder;
+        });
+
+        document.getElementById("loadSession").addEventListener("click", () => {
+            document.getElementById("showPersistens").innerHTML = "Local sat: " + sessionStorage.getItem('antalGuleroedder');
+            console.log("sessionStorage hentet: " + sessionStorage.getItem('antalGuleroedder')); 
+            document.getElementById("showPersistens").innerHTML = "sessionStorage hentet: " + sessionStorage.getItem('antalGuleroedder');
+        });
+
+        document.getElementById("deleteSession").addEventListener("click", () => {
+            delete sessionStorage; 
+            console.log("sessionStorage slettet."); 
+            document.getElementById("showPersistens").innerHTML = "sessionStorage slettet.";
+        });
+
+        //Indexed DB TODO - not working yet! 
+        document.getElementById("saveDB").addEventListener("click", () => {
+            let openRequest = indexedDB.open("myDB", 1); //name of DB , version (default 1).
+            
+            openRequest.onupgradeneeded = function() {
+                // triggers if the client had no database
+                // ...perform initialization...
+            };
+
+            openRequest.onerror = function() {
+                console.error("Error", openRequest.error);
+            };
+
+            openRequest.onsuccess = function() {
+                let db = openRequest.result;
+                // continue working with database using db object
+            };
+        });
+
+        document.getElementById("loadDB").addEventListener("click", () => {
+            //loadDB code
+        });
+
+
+        document.getElementById("deleteDB").addEventListener("click", () => {
+            let deleteRequest = indexedDB.deleteDatabase(name)
+            // deleteRequest.onsuccess/onerror tracks the result
+        });
+
+    </script>
+
+</body>
+</html>
